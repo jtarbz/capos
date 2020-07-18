@@ -15,9 +15,9 @@ void init_gdt(void)
 
 	memset(&gdt_entries, 0, sizeof(struct gdt_entry) * 3);
 
-	set_gdt(0, 0, 0, 0, 0);
-	set_gdt(1, 0, 0xffffffff, 0x9a, 0xcf);
-	set_gdt(2, 0, 0xffffffff, 0x92, 0xcf);
+	set_gdt(0, 0, 0, 0, 0);			// null segment
+	set_gdt(1, 0, 0xffffffff, 0x9a, 0xcf);	// code
+	set_gdt(2, 0, 0xffffffff, 0x92, 0xcf);	// data
 
 	wrap_lgdt((uint32_t)gdtp);
 	return;
@@ -30,8 +30,18 @@ void init_idt(void)
 
 	memset(&idt_entries, 0, sizeof(struct idt_entry) * 256);
 
-	wrap_lidt((uint32_t)idtp);
+	outb(0x20, 0x11);	// begin pic remap initialization
+	outb(0xa0, 0x11);
+	outb(0x21, 0x20);	// master pic offset
+	outb(0xa1, 0x28);	// slave pic offset
+	outb(0x21, 0x04);	// inform master of slave at irq2
+	outb(0xa1, 0x02);	// inform slave of its identity
+	outb(0x21, 0x01);
+	outb(0xa1, 0x01);
+	outb(0x21, 0x0);
+	outb(0xa1, 0x0);
 
+	/* register exceptions */
 	set_idt(0x0, (uint32_t)int0, 0x08, 0x8e);
 	set_idt(0x1, (uint32_t)int1, 0x08, 0x8e);
 	set_idt(0x2, (uint32_t)int2, 0x08, 0x8e);
@@ -53,6 +63,26 @@ void init_idt(void)
 	set_idt(0x13, (uint32_t)int13, 0x08, 0x8e);
 	set_idt(0x14, (uint32_t)int14, 0x08, 0x8e);
 	set_idt(0x1e, (uint32_t)int1e, 0x08, 0x8e);
+
+	/* register irqs */
+	set_idt(0x20, (uint32_t)irq0, 0x08, 0x8e);
+	set_idt(0x21, (uint32_t)irq1, 0x08, 0x8e);
+	set_idt(0x22, (uint32_t)irq2, 0x08, 0x8e);
+	set_idt(0x23, (uint32_t)irq3, 0x08, 0x8e);
+	set_idt(0x24, (uint32_t)irq4, 0x08, 0x8e);
+	set_idt(0x25, (uint32_t)irq5, 0x08, 0x8e);
+	set_idt(0x26, (uint32_t)irq6, 0x08, 0x8e);
+	set_idt(0x27, (uint32_t)irq7, 0x08, 0x8e);
+	set_idt(0x28, (uint32_t)irq8, 0x08, 0x8e);
+	set_idt(0x29, (uint32_t)irq9, 0x08, 0x8e);
+	set_idt(0x2a, (uint32_t)irqa, 0x08, 0x8e);
+	set_idt(0x2b, (uint32_t)irqb, 0x08, 0x8e);
+	set_idt(0x2c, (uint32_t)irqc, 0x08, 0x8e);
+	set_idt(0x2d, (uint32_t)irqd, 0x08, 0x8e);
+	set_idt(0x2e, (uint32_t)irqe, 0x08, 0x8e);
+	set_idt(0x2f, (uint32_t)irqf, 0x08, 0x8e);
+
+	wrap_lidt((uint32_t)idtp);
 
 	asm volatile ("sti");
 	return;

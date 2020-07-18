@@ -1,5 +1,5 @@
-#ifndef TABLES
-#define TABLES
+#ifndef TABLES_H
+#define TABLES_H
 
 #include <stdint.h>
 
@@ -46,5 +46,7 @@ void set_idt(uint8_t index, uint32_t base, uint16_t selector, uint8_t flags);
 
 extern void wrap_lgdt(uint32_t);
 extern void wrap_lidt(uint32_t);
+
+void init_pic(void);
 
 #endif

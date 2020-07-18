@@ -1,4 +1,5 @@
 #include "include/isr.h"
+#include "include/util.h"
 
 __attribute__((interrupt))
 void int0(struct int_frame *frame)
@@ -52,13 +53,12 @@ __attribute__((interrupt))
 void int8(struct int_frame *frame)
 {
 	printf("double fault (abort, err: %x)\n", frame->err);
-	printf("NOTE: this may be a remapped timer interrupt for now\n");
 }
 
 __attribute__((interrupt))
 void int9(struct int_frame *frame)
 {
-	printf("coprocessor segment overrun. this should't show up\n");
+	printf("coprocessor segment overrun. this shouldn't show up\n");
 }
 
 __attribute__((interrupt))
@@ -127,3 +127,106 @@ void int1e(struct int_frame *frame)
 	printf("security exception (err: %x)\n", frame->err);
 }
 
+__attribute__((interrupt))
+void irq0(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq1(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq2(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq3(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq4(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq5(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq6(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq7(struct int_frame *frame)
+{
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq8(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irq9(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqa(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqb(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqc(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqd(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqe(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}
+
+__attribute__((interrupt))
+void irqf(struct int_frame *frame)
+{
+	outb(0xa0, 0x20);
+	outb(0x20, 0x20);
+}

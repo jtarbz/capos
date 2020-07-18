@@ -39,13 +39,17 @@ section .bss
 	stack_top:
 
 ; kernel entry point
-; NOTE: multiboot drops us in protected mode and sets up a basic gdt for us,
-; which is only guaranteed to be 4 gib with overlapping data / code. it would
-; be wise to establish our own gdt in the future
+; multiboot drops us in protected mode, we set up our own gdt later
 section .text
 _start:
 	mov esp, stack_top
 	call _init
+
+	mov ecx, 0x1b		; load apic_base msr
+	rdmsr
+	and eax, ~(1 << 11)	; clear apic_base msr bit 11 (apic control)
+	wrmsr			; disable apic
+
 	call caposk
 
 	cli
