@@ -61,6 +61,17 @@ void t_putc(char c)
 		t_column = 0;
 		++t_row ;
 		break;
+	case '\b':
+		if (t_column != 0) {
+			--t_column;
+			t_putat(' ', t_color, t_column, t_row);
+		} else if (t_row > 0) {
+			--t_row;
+			t_column = 79;
+			t_putat(' ', t_color, t_column, t_row);
+		}
+
+		break;
 	default:
 		t_putat(c, t_color, t_column, t_row);
 		++t_column;

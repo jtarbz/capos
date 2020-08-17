@@ -1,5 +1,6 @@
 #include "include/isr.h"
 #include "include/util.h"
+#include "include/keyboard.h"
 
 __attribute__((interrupt))
 void int0(struct int_frame *frame)
@@ -133,9 +134,12 @@ void irq0(struct int_frame *frame)
 	outb(0x20, 0x20);
 }
 
+/* keyboard handler */
 __attribute__((interrupt))
 void irq1(struct int_frame *frame)
 {
+	keyboard_handler();
+
 	outb(0x20, 0x20);
 }
 

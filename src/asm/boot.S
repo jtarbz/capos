@@ -4,10 +4,10 @@ VIDEO		equ 1 << 2			; we want video stuff
 FLAGS 		equ ALIGNMENT | MEMINFO	| VIDEO	; build the flag field
 MAGIC 		equ 0x1badb002			; fun magic number
 CHECKSUM 	equ -(MAGIC + FLAGS)		; epic checksum
-VIDMODE		equ 1				; text mode
-WIDTH		equ 80				; columns
-HEIGHT		equ 24				; rows
-DEPTH		equ 0				; bits per pixel (does not apply)
+VIDMODE		equ 1				; video mode
+WIDTH		equ 80				; width
+HEIGHT		equ 25				; height
+DEPTH		equ 0				; bits per pixel
 
 global _start:function (_start.end - _start)
 global wrap_lgdt:function (wrap_lgdt.end - wrap_lgdt)
