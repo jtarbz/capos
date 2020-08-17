@@ -1,5 +1,6 @@
 #include "include/isr.h"
 #include "include/util.h"
+#include "include/printf.h"
 #include "include/keyboard.h"
 
 __attribute__((interrupt))

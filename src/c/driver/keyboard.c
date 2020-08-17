@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "include/keyboard.h"
-#include "include/vga.h"
+#include "include/terminal.h"
 #include "include/func.h"
 #include "include/util.h"
 
@@ -42,6 +42,7 @@ void keyboard_handler(void)
 
 	/* to avoid crash, limit buffer size to 80 for now ... will change */
 	if (scan_key[scan] == '\n' || i == (TBUF_SIZE - 1)) {
+		terminal_buffer[i - 1] = '\0';	// delete line feed
 		terminal();
 		memset(terminal_buffer, '\0', TBUF_SIZE);
 		i = 0;

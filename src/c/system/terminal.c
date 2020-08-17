@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
-#include "include/vga.h"
+#include "include/terminal.h"
+#include "include/printf.h"
 #include "include/util.h"
 #include "include/func.h"
 
@@ -11,7 +12,9 @@ static uint16_t* const VGA_MEMORY = (uint16_t *)0xb8000;
 static size_t t_row;
 static size_t t_column;
 static uint8_t t_color;
-static uint16_t *t_buffer;
+static uint16_t *t_buffer;		// for output
+
+char terminal_buffer[TBUF_SIZE];	// for commands
 
 uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
@@ -39,6 +42,9 @@ void t_init(void)
 
 	memset(terminal_buffer, '\0', TBUF_SIZE);
 
+	t_puts("Welcome to Jason Walter's Capstone OS!\n");
+	t_puts("Please enjoy your stay, and mind the dust (:\n\r");
+
 	return;
 }
 
@@ -64,6 +70,9 @@ void t_putc(char c)
 		t_column = 0;
 		++t_row ;
 		break;
+	case '\r':
+		t_puts("capos> ");
+		break;
 	case '\b':
 		if (t_column != 0) {
 			--t_column;
@@ -74,6 +83,8 @@ void t_putc(char c)
 			t_putat(' ', t_color, t_column, t_row);
 		}
 
+		break;
+	case '\0':
 		break;
 	default:
 		t_putat(c, t_color, t_column, t_row);
@@ -129,5 +140,28 @@ void t_putf(void *x, char c)
 {
 	t_putc(c);
 	
+	return;
+}
+
+void terminal(void)
+{
+	char *buf = terminal_buffer;
+	void *func;
+
+	terminal_buffer[TBUF_SIZE - 1] = '\0';
+
+	while (*buf != '(' && *buf != '\0' && *buf != ' ')
+		++buf;
+	
+	*buf = '\0';
+
+	if ((func = func_seek(terminal_buffer)) == NULL) {
+		printf("Unknown routine invoked: %s\n\r", terminal_buffer);
+		return;
+	}
+
+	fexec(func, NULL);
+	printf("\r");
+
 	return;
 }

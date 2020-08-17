@@ -1,9 +1,6 @@
 #ifndef ISR_H
 #define ISR_H
 
-#include "include/printf.h"
-#include "include/vga.h"
-
 #include <stdint.h>
 
 /*

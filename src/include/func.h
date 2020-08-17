@@ -14,9 +14,6 @@ struct func {
 uint64_t func_seek(char *);
 void *fexec(void *, void *);
 
-void terminal(void);
-
 extern struct func func_key[];
-extern char terminal_buffer[];
 
 #endif

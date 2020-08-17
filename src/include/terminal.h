@@ -1,5 +1,5 @@
-#ifndef VGA_H
-#define VGA_H
+#ifndef TERMINAL_H
+#define TERMINAL_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -30,5 +30,8 @@ void t_putc(char);
 void t_write(const char *, size_t);
 void t_puts(const char *);
 void t_putf(void *, char);
+void terminal(void);
+
+extern char terminal_buffer[];
 
 #endif
