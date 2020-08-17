@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "include/func.h"
 #include "include/util.h"
+#include "include/printf.h"
 
 void *memset(void *mem, int c, size_t n)
 {
@@ -39,6 +40,23 @@ size_t strcmp(char *str1, char *str2)
 	return diff;
 }
 
+/*
+ * standard atoi implementation; it should be easy enough to see how it works
+ * referenced from this stackoverflow discussion:
+ * https://stackoverflow.com/questions/12791077/atoi-implementation-in-c
+ * does not work for negative numbers
+ */
+int atoi(char *p)
+{
+	int k = 0;
+	while (*p) {
+		k = (k * 10) + (*p - '0');
+		++p; 
+	}
+
+	return k;
+}
+
 int *add(void *args)
 {
 	int *fargs = args;
@@ -59,4 +77,13 @@ int *mul(void *args)
 		product *= fargs[i];
 
 	return &product;
+}
+
+void help(void)
+{
+	printf("This is the help page for Jason Walter's Capstone OS\n");
+	printf("--------\n");
+	printf("[Help text goes here]\n");
+
+	return;
 }

@@ -139,7 +139,6 @@ __attribute__((interrupt))
 void irq1(struct int_frame *frame)
 {
 	keyboard_handler();
-
 	outb(0x20, 0x20);
 }
 

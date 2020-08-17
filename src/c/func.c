@@ -2,6 +2,9 @@
 #include <stddef.h>
 #include "include/func.h"
 #include "include/util.h"
+#include "include/printf.h"
+
+char terminal_buffer[TBUF_SIZE];
 
 uint64_t func_seek(char *name)
 {
@@ -30,4 +33,26 @@ void *fexec(void *func, void *args)
 	void *(*pfunc)(void *) = func;
 
 	return pfunc(args);
+}
+
+void terminal(void)
+{
+	char *buf = terminal_buffer;
+	void *func;
+
+	terminal_buffer[TBUF_SIZE - 1] = '\0';
+
+	while (*buf != '(' && *buf != '\0' && *buf != ' ')
+		buf++;
+	
+	*buf = '\0';
+
+	if ((func = func_seek(terminal_buffer)) == NULL) {
+		printf("Unknown routine invoked: %s\n", terminal_buffer);
+		return;
+	}
+	
+	fexec(func, NULL);
+
+	return;
 }

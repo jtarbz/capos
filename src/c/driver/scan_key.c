@@ -7,6 +7,7 @@ char scan_key[0xba] = {
 	0, ' ', 0
 };
 
+/* shifted scan translation key */
 char shift_scan_key[0xba] = {
 	0, 0, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b',
 	'\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
@@ -14,3 +15,13 @@ char shift_scan_key[0xba] = {
 	'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 0, '*',
 	0, ' ', 0
 };
+
+/*
+ * the above arrays define a (limited) set of keyboard scancodes, which are the
+ * signals that a keyboard sends to a computer when a key is struck or released.
+ * scancode 1 is used here; on most pc-compatible systems today, keyboards talk
+ * in scancode 2 but have a controller translate it into scancode 1 for
+ * compatibility reasons. these sets can be expanded in concert with the
+ * keyboard handler in keyboard.c to add greater functionality (tracking the
+ * state of all keys, control key support, caps lock, et cetera)
+ */

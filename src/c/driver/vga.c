@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include "include/vga.h"
 #include "include/util.h"
+#include "include/func.h"
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -35,6 +36,8 @@ void t_init(void)
 			t_buffer[index] = vga_entry(' ', t_color);
 		}
 	}
+
+	memset(terminal_buffer, '\0', TBUF_SIZE);
 
 	return;
 }

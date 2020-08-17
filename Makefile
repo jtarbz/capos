@@ -9,6 +9,7 @@ all: capos.elf
 
 clean:
 	rm -rf $(BUILD_DIR)/*.o
+	rm -rf $(BUILD_DIR)/*/
 
 iso:
 	mkdir -p iso/boot/grub/
@@ -25,6 +26,7 @@ $(BUILD_DIR)/%_c.o: $(SRC_DIR)/c/%.c
 	$(CROSS)-gcc $(CFLAGS) -c $< -o $@
 
 C_FILES = $(wildcard $(SRC_DIR)/c/*.c)
+C_FILES += $(wildcard $(SRC_DIR)/c/**/*.c)
 ASM_FILES = $(wildcard $(SRC_DIR)/asm/*.S)
 OBJ_FILES = $(C_FILES:$(SRC_DIR)/c/%.c=$(BUILD_DIR)/%_c.o)
 OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/asm/%.S=$(BUILD_DIR)/%_s.o)
