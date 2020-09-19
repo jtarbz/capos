@@ -4,6 +4,7 @@
 #include "include/printf.h"
 #include "include/util.h"
 #include "include/func.h"
+#include "include/mmap.h"
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -134,7 +135,7 @@ void t_puts(const char *data)
 }
 
 /*
- * wrapper for printf(), wish i could have rolled my own
+ * wrapper for printf()
  */
 void t_putf(void *x, char c)
 {
@@ -145,8 +146,16 @@ void t_putf(void *x, char c)
 
 void terminal(void)
 {
-	char *buf = terminal_buffer;
+	char *buf = terminal_buffer;	// for reading through
+	char *cursor;			// read ahead of buf and add nulls
 	void *func;
+	int argc = 0;
+	char **args = cmalloc(10);	// need to think about implementing an arg limit
+
+	if (terminal_buffer[0] == '\0') {
+		t_putc('\r');
+		return;
+	}
 
 	terminal_buffer[TBUF_SIZE - 1] = '\0';
 
@@ -160,8 +169,36 @@ void terminal(void)
 		return;
 	}
 
-	fexec(func, NULL);
-	printf("\r");
+	++buf;			// skip past null byte
+	while (*buf == ' ')	// ignore spaces
+		++buf;
+	cursor = buf;
+
+	/* argument parsing code goes below here */
+	/* it will not work until memory allocation is online */
+
+
+	for (argc; *cursor != '\0'; ++argc) {
+		while (*cursor != ',' && *cursor != ')')
+			++cursor;
+
+		*cursor++ = '\0';
+
+		while (*cursor == ' ')
+			*cursor++ = '\0';
+
+		args[argc] = cmalloc(80);
+		strcpy(args[argc], buf);
+		buf = cursor;
+	}
+
+	fexec(func, argc, args);
+	t_putc('\r');
+
+	for (int i = 0; i < 10; ++i)
+		cfree(args[i]);
+
+	cfree(args);
 
 	return;
 }

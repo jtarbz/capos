@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include "include/func.h"
 #include "include/util.h"
-#include "include/printf.h"
 
 uint64_t func_seek(char *name)
 {
@@ -26,9 +25,9 @@ uint64_t func_seek(char *name)
  * multiple type support? i'll worry about that later
  * this will work for now, at least to get user interaction up and running
  */
-void *fexec(void *func, void *args)
+void *fexec(void *func, int argc, char **args)
 {
-	void *(*pfunc)(void *) = func;
+	void *(*pfunc)(int, char **) = func;
 
-	return pfunc(args);
+	return pfunc(argc, args);
 }

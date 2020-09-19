@@ -11,6 +11,17 @@ void *memset(void *mem, int c, size_t n)
 	return mem;
 }
 
+void *memcpy(void *dest, void *src, size_t n)
+{
+	uint8_t *tmp_dest = dest;
+	uint8_t *tmp_src = src;
+
+	while (n--)
+		tmp_dest[n] = tmp_src[n];
+
+	return dest;
+}
+
 size_t strlen(const char *str)
 {
 	size_t len = 0;
@@ -40,6 +51,16 @@ size_t strcmp(char *str1, char *str2)
 	return diff;
 }
 
+void strcpy(char *str1, char *str2)
+{
+	while (*str2)
+		*str1++ = *str2++;
+
+	*str1 = '\0';
+
+	return;
+}
+
 /*
  * standard atoi implementation; it should be easy enough to see how it works
  * referenced from this stackoverflow discussion:
@@ -57,18 +78,19 @@ int atoi(char *p)
 	return k;
 }
 
-int *add(void *args)
+int *add(int argc, char **args)
 {
-	int *fargs = args;
 	int sum = 0;
 
-	for (size_t i = 0; fargs[i]; ++i)
-		sum += fargs[i];
+	for (size_t i = 0; i < argc; ++i)
+		sum += atoi(args[i]);
 	
-	return &sum;
+	printf("sum: %d\n", sum);
+
+	return sum;
 }
 
-int *mul(void *args)
+int *mul(char **args)
 {
 	int *fargs = args;
 	int product = 1;

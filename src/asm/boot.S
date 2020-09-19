@@ -50,6 +50,7 @@ _start:
 	and eax, ~(1 << 11)	; clear apic_base msr bit 11 (apic control)
 	wrmsr			; disable apic
 
+	push ebx		; push multiboot info pointer
 	call caposk
 
 	cli

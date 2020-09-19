@@ -12,7 +12,7 @@ struct func {
 };
 
 uint64_t func_seek(char *);
-void *fexec(void *, void *);
+void *fexec(void *, int, char **);
 
 extern struct func func_key[];
 
