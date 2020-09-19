@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define ARGC_INIT 5
+
 enum vga_color {
 	BLACK		= 0,
 	BLUE		= 1,
@@ -32,6 +34,6 @@ void t_puts(const char *);
 void t_putf(void *, char);
 void terminal(void);
 
-extern char terminal_buffer[];
+extern char *terminal_buffer;
 
 #endif

@@ -1,13 +1,12 @@
 #include <stddef.h>
 #include "include/multiboot.h"
-#include "include/mmap.h"
+#include "include/mem.h"
 #include "include/util.h"
-#include "include/printf.h"
 
 struct mem_chunk *mem_key;	// global, list of chunks and their states
 size_t chunk_total;		// set in mmap_init()
 
-void mmap_init(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
+void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 {
 	mmap_entry_t *entry = mmap_addr;
 	size_t available_regions = 0;
@@ -33,12 +32,7 @@ void mmap_init(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 
 	chunk_total = mem_total / CHUNK_SIZE;
 
-	/*
-	 * find available region with enough space for chunk metadata, and then
-	 * fill in metadata for all chunks. there has to be a prettier and more
-	 * efficient way to do this ... come back and refactor after everything
-	 * works
-	 */
+	/* find available region with space for chunk data, then fill it in */
 	size_t k = 0;
 	size_t l = 0;
 	for (size_t i = 0; i < available_regions; ++i) {
@@ -50,7 +44,8 @@ void mmap_init(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 				mem_key[j].type = 0;
 				++l;
 
-				if (available_mem[k]->base_addr_low + (CHUNK_SIZE * l) > available_mem[k]->base_addr_low + available_mem[k]->length_low) {
+				if (available_mem[k]->base_addr_low + (CHUNK_SIZE * l) >
+				    available_mem[k]->base_addr_low + available_mem[k]->length_low) {
 					++k;
 					l = 0;
 				}

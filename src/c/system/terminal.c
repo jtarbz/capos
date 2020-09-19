@@ -4,7 +4,7 @@
 #include "include/printf.h"
 #include "include/util.h"
 #include "include/func.h"
-#include "include/mmap.h"
+#include "include/mem.h"
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -13,9 +13,9 @@ static uint16_t* const VGA_MEMORY = (uint16_t *)0xb8000;
 static size_t t_row;
 static size_t t_column;
 static uint8_t t_color;
-static uint16_t *t_buffer;		// for output
+static uint16_t *t_buffer;	// for output
 
-char terminal_buffer[TBUF_SIZE];	// for commands
+char *terminal_buffer;		// for commands
 
 uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
@@ -41,7 +41,9 @@ void t_init(void)
 		}
 	}
 
-	memset(terminal_buffer, '\0', TBUF_SIZE);
+	terminal_buffer = cmalloc(80);
+
+	memset(terminal_buffer, '\0', 80);
 
 	t_puts("Welcome to Jason Walter's Capstone OS!\n");
 	t_puts("Please enjoy your stay, and mind the dust (:\n\r");
@@ -150,14 +152,12 @@ void terminal(void)
 	char *cursor;			// read ahead of buf and add nulls
 	void *func;
 	int argc = 0;
-	char **args = cmalloc(10);	// need to think about implementing an arg limit
+	char **args = cmalloc(sizeof(char *));
 
 	if (terminal_buffer[0] == '\0') {
 		t_putc('\r');
 		return;
 	}
-
-	terminal_buffer[TBUF_SIZE - 1] = '\0';
 
 	while (*buf != '(' && *buf != '\0' && *buf != ' ')
 		++buf;
@@ -175,10 +175,8 @@ void terminal(void)
 	cursor = buf;
 
 	/* argument parsing code goes below here */
-	/* it will not work until memory allocation is online */
-
-
 	for (argc; *cursor != '\0'; ++argc) {
+		args = crealloc(args, sizeof(char *) * (argc + 1));
 		while (*cursor != ',' && *cursor != ')')
 			++cursor;
 
@@ -195,8 +193,8 @@ void terminal(void)
 	fexec(func, argc, args);
 	t_putc('\r');
 
-	for (int i = 0; i < 10; ++i)
-		cfree(args[i]);
+	while (argc--)
+		cfree(args[argc]);
 
 	cfree(args);
 

@@ -24,7 +24,9 @@ compiled directly into the kernel before runtime and those procedures meant to
 be accessible to a user added to a universal function key.
 
 This project is a work in progress, and anything stands to change at the drop of
-a hat.
+a hat. The scope and implementation of the project will remain limited
+throughout the duration of the Capstone senior research project in order to
+allow for more focused research.
 
 # credit, where due
 A big thank you to the people over at the OSdev wiki for getting me started with

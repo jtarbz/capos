@@ -1,5 +1,5 @@
-#ifndef MMAP_H
-#define MMAP_H
+#ifndef MEM_H
+#define MEM_H
 
 #define CHUNK_SIZE 0x1000	// 4 kib
 
@@ -26,11 +26,11 @@ typedef struct split_mmap_entry mmap_entry_t;
  * 2: in use, contiguous extending chunk
  */
 struct mem_chunk {
-	uint32_t base;
+	void *base;
 	uint8_t type;
 };
 
-void mmap_init(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length);
+void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length);
 void *cmalloc(size_t size);
 void cfree(void *chunk);
 void *crealloc(void *chunk, size_t size);

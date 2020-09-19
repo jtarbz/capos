@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-#define TBUF_SIZE 80
-
 struct func {
 	char name[16];
 	void *addr;

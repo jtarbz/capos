@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "include/func.h"
-#include "include/util.h"
+#include "include/ufunc.h"
 
 struct func func_key[] = {
 	{"add", add},

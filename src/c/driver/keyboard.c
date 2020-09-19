@@ -3,6 +3,7 @@
 #include "include/terminal.h"
 #include "include/func.h"
 #include "include/util.h"
+#include "include/mem.h"
 
 /*
  * send keystrokes to the display and also push them to the terminal bufffer,
@@ -12,6 +13,7 @@ void keyboard_handler(void)
 {
 	static int8_t shift = 0;
 	static uint32_t i = 0;
+	static tbuf_size = 80;
 	uint8_t scan = inb(0x60);
 
 	if (scan == 0x2a || scan == 0xaa) {
@@ -40,11 +42,12 @@ void keyboard_handler(void)
 		memset(terminal_buffer + i, '\0', 2);
 	}
 
-	/* to avoid crash, limit buffer size to 80 for now ... will change */
-	if (scan_key[scan] == '\n' || i == (TBUF_SIZE - 1)) {
+	if (i == (tbuf_size - 1))
+		terminal_buffer = crealloc(terminal_buffer, ++tbuf_size);
+
+	if (scan_key[scan] == '\n') {
 		terminal_buffer[i - 1] = '\0';	// delete line feed
 		terminal();
-		memset(terminal_buffer, '\0', TBUF_SIZE);
 		i = 0;
 	}
 

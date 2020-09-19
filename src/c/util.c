@@ -77,35 +77,3 @@ int atoi(char *p)
 
 	return k;
 }
-
-int *add(int argc, char **args)
-{
-	int sum = 0;
-
-	for (size_t i = 0; i < argc; ++i)
-		sum += atoi(args[i]);
-	
-	printf("sum: %d\n", sum);
-
-	return sum;
-}
-
-int *mul(char **args)
-{
-	int *fargs = args;
-	int product = 1;
-
-	for (size_t i = 0; fargs[i]; ++i)
-		product *= fargs[i];
-
-	return &product;
-}
-
-void help(void)
-{
-	printf("This is the help page for Jason Walter's Capstone OS\n");
-	printf("--------\n");
-	printf("[Help text goes here]\n");
-
-	return;
-}
