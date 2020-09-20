@@ -2,6 +2,7 @@
 #include "include/util.h"
 #include "include/printf.h"
 #include "include/keyboard.h"
+#include "include/timer.h"
 
 __attribute__((interrupt))
 void int0(struct int_frame *frame)
@@ -132,6 +133,7 @@ void int1e(struct int_frame *frame)
 __attribute__((interrupt))
 void irq0(struct int_frame *frame)
 {
+	timer_handler();
 	outb(0x20, 0x20);
 }
 

@@ -19,11 +19,8 @@ uint64_t func_seek(char *name)
 
 /*
  * here, args is an array of arguments
- * final element in the array is set to NULL by wrapper
- * type is defined on-the-fly by the called function
- * string / array support? i'll worry about that later
- * multiple type support? i'll worry about that later
- * this will work for now, at least to get user interaction up and running
+ * any ufunc called through this wrapper works like a terminal app
+ * ie, takes ascii args and an argc
  */
 void *fexec(void *func, int argc, char **args)
 {

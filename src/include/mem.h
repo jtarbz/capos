@@ -1,7 +1,7 @@
 #ifndef MEM_H
 #define MEM_H
 
-#define CHUNK_SIZE 0x1000	// 4 kib
+#define CHUNK_SIZE 0x100	// 256 bytes
 
 #include <stdint.h>
 #include <stddef.h>
