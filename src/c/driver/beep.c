@@ -29,3 +29,26 @@ void tbeep(uint32_t freq, uint32_t ms)
 	unbeep();
 	return;
 }
+
+void beep_two(uint32_t freq1, uint32_t freq2, uint32_t ms)
+{
+	uint32_t tick_sum = ticks + ms;
+	while (tick_sum > ticks) {
+		tbeep(freq1, 20);
+		tbeep(freq2, 20);
+	}
+
+	return;
+}
+
+void beep_three(uint32_t freq1, uint32_t freq2, uint32_t freq3, uint32_t ms)
+{
+	uint32_t tick_sum = ticks + ms;
+	while (tick_sum > ticks) {
+		tbeep(freq1, 15);
+		tbeep(freq2, 15);
+		tbeep(freq3, 15);
+	}
+
+	return;
+}

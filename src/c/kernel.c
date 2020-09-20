@@ -19,13 +19,39 @@ void caposk(multiboot_info_t *mbd)
 	printf("\nEnjoy the music!!\n");
 
 	for (;;) {
-		tbeep(294, 500);
-		tbeep(330, 500);
-		tbeep(349, 500);
-		tbeep(392, 500);
-		tbeep(330, 1000);
-		tbeep(262,500);
-		tbeep(294, 1500);
+		tbeep(262, 700);
+		sleep(50);
+		tbeep(262, 250);
+		beep_two(294, 349, 1000);
+		beep_three(330, 262, 392, 1000);
+		beep_two(349, 440, 1000);
+		beep_three(392, 329, 523, 2000);
+		tbeep(262, 700);
+		sleep(50);
+		tbeep(262, 250);
+		beep_two(294, 392, 1000);
+		beep_three(330, 262, 440, 1000);
+		beep_three(294, 392, 466, 1000);
+		beep_three(262, 349, 440, 2000);
+		beep_two(262, 440, 700);
+		sleep(50);
+		beep_two(262, 440, 250);
+		beep_two(262, 523, 1000);
+		beep_two(262, 440, 1000);
+		beep_three(277, 349, 440, 1000);
+		beep_three(262, 330, 587, 1000);
+		beep_two(294, 466, 950);
+		sleep(50);
+		beep_two(294, 466, 700);
+		sleep(50);
+		beep_two(330, 466, 250);
+		beep_three(349, 440, 523, 950);
+		sleep(50);
+		beep_three(440, 349, 523, 950);
+		sleep(50);
+		beep_three(466, 392, 523, 950);
+		sleep(50);
+		beep_three(440, 349, 523, 3000);
 		sleep(2000);
 	}
 }
