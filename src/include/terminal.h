@@ -32,8 +32,10 @@ void t_putc(char);
 void t_write(const char *, size_t);
 void t_puts(const char *);
 void t_putf(void *, char);
+void t_clear(void);
 void terminal(void);
 
 extern char *terminal_buffer;
+extern uint8_t terminal_ready;
 
 #endif

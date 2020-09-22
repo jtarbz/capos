@@ -47,7 +47,7 @@ void keyboard_handler(void)
 
 	if (scan_key[scan] == '\n') {
 		terminal_buffer[i - 1] = '\0';	// delete line feed
-		terminal();
+		terminal_ready = 1;
 		i = 0;
 	}
 

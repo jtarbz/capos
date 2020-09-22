@@ -35,8 +35,8 @@ void beep_two(uint32_t freq1, uint32_t freq2, uint32_t ms)
 {
 	uint32_t tick_sum = ticks + ms;
 	while (tick_sum > ticks) {
-		tbeep(freq1, 20);
-		tbeep(freq2, 20);
+		tbeep(freq1, 13);
+		tbeep(freq2, 13);
 	}
 
 	return;
@@ -46,10 +46,39 @@ void beep_three(uint32_t freq1, uint32_t freq2, uint32_t freq3, uint32_t ms)
 {
 	uint32_t tick_sum = ticks + ms;
 	while (tick_sum > ticks) {
-		tbeep(freq1, 15);
-		tbeep(freq2, 15);
-		tbeep(freq3, 15);
+		tbeep(freq1, 13);
+		tbeep(freq2, 13);
+		tbeep(freq3, 13);
 	}
 
+	return;
+}
+
+void beep_note(uint32_t freq, uint32_t ms)
+{
+	tbeep(freq, ms - 10);
+	sleep(10);
+}
+
+void beep_twon(uint32_t freq1, uint32_t freq2, uint32_t ms)
+{
+	uint32_t tick_sum = ticks + ms - 10;
+	while (tick_sum > ticks) {
+		tbeep(freq1, 13);
+		tbeep(freq2, 13);
+	}
+	sleep(10);
+	return;
+}
+
+void beep_threen(uint32_t freq1, uint32_t freq2, uint32_t freq3, uint32_t ms)
+{
+	uint32_t tick_sum = ticks + ms - 10;
+	while (tick_sum > ticks) {
+		tbeep(freq1, 13);
+		tbeep(freq2, 13);
+		tbeep(freq3, 13);
+	}
+	sleep(10);
 	return;
 }

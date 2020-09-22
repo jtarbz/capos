@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include "include/ufunc.h"
 #include "include/util.h"
+#include "include/terminal.h"
 #include "include/printf.h"
 
 void add(int argc, char **args)

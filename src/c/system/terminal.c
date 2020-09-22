@@ -16,6 +16,7 @@ static uint8_t t_color;
 static uint16_t *t_buffer;	// for output
 
 char *terminal_buffer;		// for commands
+uint8_t terminal_ready;
 
 uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
 {
@@ -47,6 +48,7 @@ void t_init(void)
 
 	t_puts("Welcome to Jason Walter's Capstone OS!\n");
 	t_puts("Please enjoy your stay, and mind the dust (:\n\r");
+	terminal_ready = 0;
 
 	return;
 }
@@ -146,6 +148,17 @@ void t_putf(void *x, char c)
 	return;
 }
 
+void t_clear(void)
+{
+	for (uint32_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+		t_buffer[i] = ' ';
+
+	t_row = 0;
+	t_column = 0;
+
+	return;
+}
+
 void terminal(void)
 {
 	char *buf = terminal_buffer;	// for reading through
@@ -156,6 +169,7 @@ void terminal(void)
 
 	if (terminal_buffer[0] == '\0') {
 		t_putc('\r');
+		terminal_ready = 0;
 		return;
 	}
 
@@ -166,6 +180,7 @@ void terminal(void)
 
 	if ((func = func_seek(terminal_buffer)) == NULL) {
 		printf("Unknown routine invoked: %s\n\r", terminal_buffer);
+		terminal_ready = 0;
 		return;
 	}
 
@@ -197,6 +212,8 @@ void terminal(void)
 		cfree(args[argc]);
 
 	cfree(args);
+
+	terminal_ready = 0;
 
 	return;
 }
