@@ -42,6 +42,10 @@ void happy_birthday(void)
 	return;
 }
 
+/*
+ * megalovania is a song by toby fox. this arrangement is covered under
+ * CC BY-NC-SA 3.0 (https://creativecommons.org/licenses/by-nc-sa/3.0/)
+ */
 void sans_undertale(void)
 {
 	t_clear();
