@@ -22,9 +22,10 @@ uint64_t func_seek(char *name)
  * any ufunc called through this wrapper works like a terminal app
  * ie, takes ascii args and an argc
  */
-void *fexec(void *func, int argc, char **args)
+void fexec(void *func, int argc, char **args)
 {
-	void *(*pfunc)(int, char **) = func;
+	void (*pfunc)(int, char **) = func;
 
-	return pfunc(argc, args);
+	pfunc(argc, args);
+	return;
 }

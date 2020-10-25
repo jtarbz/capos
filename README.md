@@ -13,7 +13,7 @@ resources pertaining to its implementation.
 The most basic concept behind capos is eliminating the delineation between
 kernel space and user space, removing security and protection in order to allow
 a user to have more complete access to the computer. This is not to say that
-security is anunimportant aspect of operating system design, but rather to
+security is an unimportant aspect of operating system design, but rather to
 highlight its restriction on personal computing. In addition, capos should be as
 modular as possible with its procedures so as to allow for effective comparison
 and testing of different implementations for resource allocation, scheduling,
@@ -42,4 +42,6 @@ the information for OS design / programming, and to Kustaa Nyholm for his tiny
 printf implementation, which has been incredibly useful for debugging.
 
 # licensing
-This project is licensed under the GNU General Public License Version 3.
+The source code of project is licensed under the GNU General Public License
+Version 3. The arrangement of Megalovania by Toby Fox for the PC motherboard
+speaker is licensed under CC BY-NC-SA 3.0.

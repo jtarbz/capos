@@ -167,9 +167,10 @@ void terminal(void)
 	int argc = 0;
 	char **args = cmalloc(sizeof(char *));
 
+	terminal_ready = 0;
+
 	if (terminal_buffer[0] == '\0') {
 		t_putc('\r');
-		terminal_ready = 0;
 		return;
 	}
 
@@ -180,7 +181,6 @@ void terminal(void)
 
 	if ((func = func_seek(terminal_buffer)) == NULL) {
 		printf("Unknown routine invoked: %s\n\r", terminal_buffer);
-		terminal_ready = 0;
 		return;
 	}
 
@@ -212,8 +212,5 @@ void terminal(void)
 		cfree(args[argc]);
 
 	cfree(args);
-
-	terminal_ready = 0;
-
 	return;
 }
