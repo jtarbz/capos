@@ -44,3 +44,13 @@ void umem_status(void)
 
 	return;
 }
+
+void echo(int argc, char **args)
+{
+	for (int i = 0; i < argc; ++i) {
+		t_puts(args[i]);
+		t_putc(' ');
+	}
+	
+	t_putc('\n');
+}

@@ -192,20 +192,38 @@ void terminal(void)
 	cursor = buf;
 	args = cmalloc(sizeof(char *));
 
-	/* argument parsing code */
 	for (; *cursor != '\0'; ++argc) {
 		args = crealloc(args, sizeof(char *) * (argc + 1));
-		while (*cursor != ',' && *cursor != ' ' && *cursor != ')' && *cursor != '\0')
-			++cursor;
 
-		*cursor++ = '\0';
+		if (*cursor++ == '"') {
+			while (*cursor != '"' && *cursor != '\0')
+				++cursor;
 
-		while (*cursor == ' ')
+			++buf;
 			*cursor++ = '\0';
 
-		args[argc] = cmalloc(strlen(buf) + 1);
-		strcpy(args[argc], buf);
-		buf = cursor;
+			args[argc] = cmalloc(strlen(buf) + 1);
+			strcpy(args[argc], buf);
+
+			while (*cursor == ',' || *cursor == ' ' ||
+			       *cursor == ')')
+				++cursor;
+
+			buf = cursor;
+		}
+		else {
+			while (*cursor != ',' && *cursor != ' ' &&
+			       *cursor != ')' && *cursor != '\0')
+				++cursor;
+
+			*cursor++ = '\0';
+			while (*cursor == ',' || *cursor ==' ')
+				++cursor;
+
+			args[argc] = cmalloc(strlen(buf) + 1);
+			strcpy(args[argc], buf);
+			buf = cursor;
+		}
 	}
 
 	fexec(func, argc, args);
