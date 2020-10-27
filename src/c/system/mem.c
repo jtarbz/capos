@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdint.h>
 #include "include/multiboot.h"
 #include "include/mem.h"
 #include "include/util.h"
@@ -77,7 +78,7 @@ void *cmalloc(size_t size)
 					break;
 				}
 				else if (j == (size / CHUNK_SIZE)) {
-					for (j; j > 0; --j)
+					for (; j > 0; --j)
 						mem_key[i + j].type = 2;
 					
 					mem_key[i].type = 1;
@@ -110,4 +111,15 @@ void *crealloc(void *chunk, size_t size)
 	memcpy(nchunk, chunk, size);
 	cfree(chunk);
 	return(nchunk);
+}
+
+uint32_t mem_status(void)
+{
+	uint32_t allocated;
+	for (size_t i = 0; i < chunk_total; ++i) {
+		if (mem_key[i].type > 0)
+			++allocated;
+	}
+
+	return allocated;
 }

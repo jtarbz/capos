@@ -5,6 +5,7 @@
 #include "include/util.h"
 #include "include/timer.h"
 #include "include/beep.h"
+#include "include/ufunc.h"
 #include "include/printf.h"
 
 void caposk(multiboot_info_t *mbd)
@@ -15,6 +16,9 @@ void caposk(multiboot_info_t *mbd)
 	set_timer(1000);	// tick on millisecond
 	t_init();
 	init_printf(0, t_putf);
+
+	umem_status();
+	t_putc('\r');
 
 	for (;;) {
 		asm volatile ("nop");	// conditional ignored without this ...

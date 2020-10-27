@@ -37,9 +37,13 @@ void keyboard_handler(void)
 	}
 
 	/* handle backspaces in terminal buffer */
-	if (scan_key[scan] == '\b' && i > 0) {
+	if (scan_key[scan] == '\b' && i > 1) {
 		i -= 2;
 		memset(terminal_buffer + i, '\0', 2);
+	}
+	else if (scan_key[scan] == '\b') {
+		--i;
+		terminal_buffer[i] = '\0';
 	}
 
 	if (i == (tbuf_size - 1))

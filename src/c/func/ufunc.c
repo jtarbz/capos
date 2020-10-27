@@ -1,7 +1,9 @@
 #include <stddef.h>
+#include <stdint.h>
 #include "include/ufunc.h"
 #include "include/util.h"
 #include "include/terminal.h"
+#include "include/mem.h"
 #include "include/printf.h"
 
 void add(int argc, char **args)
@@ -31,6 +33,14 @@ void help(void)
 	printf("This is the help page for Jason Walter's Capstone OS\n");
 	printf("--------\n");
 	printf("[Help text goes here]\n");
+
+	return;
+}
+
+void umem_status(void)
+{
+	uint32_t allocated = mem_status();
+	printf("%d out of %d chunks used\n", allocated, chunk_total);
 
 	return;
 }

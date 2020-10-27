@@ -34,7 +34,9 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length);
 void *cmalloc(size_t size);
 void cfree(void *chunk);
 void *crealloc(void *chunk, size_t size);
+uint32_t mem_status(void);
 
 extern struct mem_chunk *mem_key;
+extern size_t chunk_total;
 
 #endif

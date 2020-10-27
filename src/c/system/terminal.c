@@ -5,6 +5,7 @@
 #include "include/util.h"
 #include "include/func.h"
 #include "include/mem.h"
+#include "include/ufunc.h"
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -189,10 +190,10 @@ void terminal(void)
 		++buf;
 	cursor = buf;
 
-	/* argument parsing code goes below here */
-	for (argc; *cursor != '\0'; ++argc) {
+	/* argument parsing code */
+	for (; *cursor != '\0'; ++argc) {
 		args = crealloc(args, sizeof(char *) * (argc + 1));
-		while (*cursor != ',' && *cursor != ')')
+		while (*cursor != ',' && *cursor != ' ' && *cursor != ')' && *cursor != '\0')
 			++cursor;
 
 		*cursor++ = '\0';
@@ -200,7 +201,7 @@ void terminal(void)
 		while (*cursor == ' ')
 			*cursor++ = '\0';
 
-		args[argc] = cmalloc(80);
+		args[argc] = cmalloc(strlen(buf) + 1);
 		strcpy(args[argc], buf);
 		buf = cursor;
 	}
