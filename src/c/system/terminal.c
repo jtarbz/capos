@@ -48,7 +48,7 @@ void t_init(void)
 	memset(terminal_buffer, '\0', 80);
 
 	t_puts("Welcome to Jason Walter's Capstone OS!\n");
-	t_puts("Please enjoy your stay, and mind the dust (:\n\r");
+	t_puts("Please enjoy your stay, and mind the dust (:\n");
 	terminal_ready = 0;
 
 	return;
@@ -166,7 +166,7 @@ void terminal(void)
 	char *cursor;			// read ahead of buf and add nulls
 	void *func;
 	int argc = 0;
-	char **args = cmalloc(sizeof(char *));
+	char **args;
 
 	terminal_ready = 0;
 
@@ -188,7 +188,9 @@ void terminal(void)
 	++buf;			// skip past null byte
 	while (*buf == ' ')	// ignore spaces
 		++buf;
+
 	cursor = buf;
+	args = cmalloc(sizeof(char *));
 
 	/* argument parsing code */
 	for (; *cursor != '\0'; ++argc) {
@@ -209,9 +211,11 @@ void terminal(void)
 	fexec(func, argc, args);
 	t_putc('\r');
 
-	while (argc--)
+	/* free chunks and clear buffer to avoid persistent argument jank */
+	for (; argc >= 0; --argc)
 		cfree(args[argc]);
 
 	cfree(args);
+	memset(terminal_buffer, '\0', cursor - terminal_buffer);
 	return;
 }
