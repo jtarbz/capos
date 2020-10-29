@@ -29,3 +29,8 @@ void sleep(uint32_t delay)
 
 	return;
 }
+
+uint32_t get_time(void)
+{
+	return ticks;
+}

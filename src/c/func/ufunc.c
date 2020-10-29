@@ -1,9 +1,11 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "include/ufunc.h"
+#include "include/func.h"
 #include "include/util.h"
 #include "include/terminal.h"
 #include "include/mem.h"
+#include "include/timer.h"
 #include "include/printf.h"
 
 void add(int argc, char **args)
@@ -53,4 +55,27 @@ void echo(int argc, char **args)
 	}
 	
 	t_putc('\n');
+	return;
+}
+
+void time(int argc, char **args)
+{
+	void *func;
+	uint32_t ms;
+	if (argc < 1) {
+		t_puts("Usage: time [program] [args]\n");
+		t_puts("NOTE: time() currently only works with standard argument form, using spaces");
+		return;
+	}
+
+	if ((func = func_seek(args[0])) == NULL) {
+		printf("Unknown routine invoked in time: %s\n", args[0]);
+		return;
+	}
+
+	++args;
+	ms = get_time();
+	fexec(func, argc - 1, args);
+	printf("Milliseconds elapsed: %d\n", get_time() - ms);
+	return;
 }

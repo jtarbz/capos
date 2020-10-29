@@ -182,6 +182,7 @@ void terminal(void)
 
 	if ((func = func_seek(terminal_buffer)) == NULL) {
 		printf("Unknown routine invoked: %s\n\r", terminal_buffer);
+		memset(terminal_buffer, '\0', buf - terminal_buffer);
 		return;
 	}
 
