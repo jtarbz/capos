@@ -80,7 +80,10 @@ void t_putc(char c)
 		t_puts("capos> ");
 		break;
 	case '\b':
-		if (t_column != 0) {
+		if (!terminal_ready && t_column < 8) {	// let's not delete the prompt ...
+			break;
+		}
+		else if (t_column != 0) {
 			--t_column;
 			t_putat(' ', t_color, t_column, t_row);
 		} else if (t_row > 0) {
