@@ -110,9 +110,7 @@ void cfree(void *mem)
 void *crealloc(void *mem, size_t size)
 {
 	void *nmem = cmalloc(size);
-	struct busy_hop *busy = (struct busy_hop *)((char *)mem - offsetof(struct busy_hop, data));
-	size_t msize = busy->size;
-	memcpy(nmem, mem, msize > size ? size : msize);
+	memcpy(nmem, mem, size);
 	cfree(mem);
 	return nmem;
 }
@@ -121,6 +119,7 @@ uint32_t mem_status(void)
 {
 	struct free_hop *p = free_origin.fw;
 	uint32_t free = 0;
+
 	while (p != NULL) {
 		free += p->size;
 		p = p->fw;
@@ -128,3 +127,29 @@ uint32_t mem_status(void)
 
 	return free;
 }
+
+void defragment(void)
+{
+	struct free_hop *p = free_origin.fw;
+	struct free_hop *cmp = p->fw;
+
+	/* search for adjacent hops, then collapse them together */
+	while (p != NULL) {
+		while (cmp != NULL) {
+			if (cmp == (struct free_hop *)((char *)p + p->size)) {
+				cmp->bk->fw = cmp->fw;
+				if (cmp->fw != NULL)
+					cmp->fw->bk = cmp->bk;
+				p->size = (p->size + cmp->size);
+			}
+
+			cmp = cmp->fw;
+		}
+
+		p = p->fw;
+		cmp = free_origin.fw;
+	}
+
+	return;
+}
+

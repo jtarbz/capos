@@ -58,6 +58,28 @@ void mem_hops(void)
 	return;
 }
 
+void udefrag(void)
+{
+	struct free_hop *p = free_origin.fw;
+	uint32_t i = 0;
+
+	while (p != NULL) {
+		++i;
+		p = p->fw;
+	}
+
+	defragment();
+
+	p = free_origin.fw;
+	while (p != NULL) {
+		--i;
+		p = p->fw;
+	}
+
+	printf("%d memory hops collapsed\n", i);
+	return;
+}
+
 void echo(int argc, char **args)
 {
 	for (int i = 0; i < argc; ++i) {
