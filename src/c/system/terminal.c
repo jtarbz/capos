@@ -171,10 +171,9 @@ void terminal(void)
 	int argc = 0;
 	char **args;
 
-	terminal_ready = 0;
-
 	if (terminal_buffer[0] == '\0') {
 		t_putc('\r');
+		terminal_ready = 0;
 		return;
 	}
 
@@ -186,6 +185,7 @@ void terminal(void)
 	if ((func = func_seek(terminal_buffer)) == NULL) {
 		printf("Unknown routine invoked: %s\n\r", terminal_buffer);
 		memset(terminal_buffer, '\0', buf - terminal_buffer);
+		terminal_ready = 0;
 		return;
 	}
 
@@ -234,10 +234,11 @@ void terminal(void)
 	t_putc('\r');
 
 	/* free chunks and clear buffer to avoid persistent argument jank */
-	for (; argc >= 0; --argc)
-		cfree(args[argc]);
+	for (int i = 0; i < argc; ++i)
+		cfree(args[i]);
 
 	cfree(args);
 	memset(terminal_buffer, '\0', cursor - terminal_buffer);
+	terminal_ready = 0;
 	return;
 }

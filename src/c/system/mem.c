@@ -2,16 +2,17 @@
 #include <stdint.h>
 #include "include/multiboot.h"
 #include "include/mem.h"
+#include "include/printf.h"
 #include "include/util.h"
 
-struct mem_chunk *mem_key;	// global, list of chunks and their states
-size_t chunk_total;		// set in mmap_init()
+struct free_hop free_origin;	// global, head of free hop list
+size_t mem_total;		// set in mmap_init()
 
 void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 {
 	mmap_entry_t *entry = mmap_addr;
 	size_t available_regions = 0;
-	size_t mem_total = 0;
+	mem_total = 0;
 
 	/* make space for all regions to have enough for available regions */
 	mmap_entry_t *available_mem[mmap_length / sizeof(mmap_entry_t)];
@@ -31,95 +32,99 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 	for (size_t i = 0; i < available_regions; ++i)
 		mem_total += available_mem[i]->length_low;
 
-	chunk_total = mem_total / CHUNK_SIZE;
-
-	/* find available region with space for chunk data, then fill it in */
-	size_t k = 0;
-	size_t l = 0;
 	for (size_t i = 0; i < available_regions; ++i) {
-		if (available_mem[i]->length_low >= (chunk_total * sizeof(struct mem_chunk))) {
-			mem_key = available_mem[i]->base_addr_low;
+		if (available_mem[i]->length_low >= 0x100000) {
+			free_origin.fw = (struct free_hop *)available_mem[i]->base_addr_low;
+			free_origin.size = 0;
+			free_origin.bk = NULL;
 
-			for (size_t j = 0; j < chunk_total; ++j) {
-				mem_key[j].base = available_mem[k]->base_addr_low + (CHUNK_SIZE * l);
-				mem_key[j].type = 0;
-				++l;
-
-				if (available_mem[k]->base_addr_low + (CHUNK_SIZE * l) >
-				    available_mem[k]->base_addr_low + available_mem[k]->length_low) {
-					++k;
-					l = 0;
-				}
-			}
-
+			free_origin.fw->size = (size_t)available_mem[i]->length_low;
+			free_origin.fw->fw = NULL;
+			free_origin.fw->bk = &free_origin;
 			break;
 		}
 	}
 
-	/* mark metadata chunks as type 1 */
-	for (size_t i = 0; i < ((chunk_total * sizeof(struct mem_chunk)) / 0x1000) + 0x1000 ; ++i)
-		mem_key[i].type = 1;
+	return;
 }
 
 void *cmalloc(size_t size)
 {
-	if (size < CHUNK_SIZE) {
-		for (size_t i = 0; i < chunk_total; ++i) {
-			if (mem_key[i].type == 0) {
-				mem_key[i].type = 1;
-				return mem_key[i].base;
-			}
-		}
-	}
-	else {
-		for (size_t i = 0; i < chunk_total; ++i) {
-			for (size_t j = 0; ; ++j) {
-				if (mem_key[i + j].type != 0) {
-					break;
-				}
-				else if (j == (size / CHUNK_SIZE)) {
-					for (; j > 0; --j)
-						mem_key[i + j].type = 2;
-					
-					mem_key[i].type = 1;
-					return mem_key[i].base;
-				}
-			}
+	struct free_hop *p = free_origin.fw;
+	size = (size + sizeof(struct busy_hop) + 7) & (-8);
 
+	/* if there is a memory region of equal size, pop out and fix links */
+	while (p != NULL) {
+		if (p->size == size) {
+			p->bk->fw = p->fw;
+			if (p->fw != NULL)
+				p->fw->bk = p->bk;
+			struct busy_hop *busy = (struct busy_hop *)p;
+			busy->size = size;
+			return &(busy->data);
 		}
+
+		p = p->fw;
+	}
+
+	/* otherwise, split the first larger region */
+	p = free_origin.fw;
+	while (p != NULL) {
+		/* if size is greater, carve out space and fix links */
+		if (p->size - sizeof(struct free_hop) > size) {
+			p->bk->fw = (struct free_hop *)((char *)p + size);
+			p->bk->fw->bk = p->bk;
+			p->bk->fw->fw = p->fw;
+			p->bk->fw->size = (p->size - size);
+			if (p->fw != NULL)
+				p->fw->bk = p->bk->fw;
+			struct busy_hop *busy = (struct busy_hop *)p;
+			busy->size = size;
+			return &(busy->data);
+		}
+
+		/* if size is less, proceed to next link in chain */
+		p = p->fw;
 	}
 
 	return NULL;	// memory machine broke
 }
 
-void cfree(void *chunk)
+void cfree(void *mem)
 {
-	for (size_t i = 0; i < chunk_total; ++i) {
-		if ((void *)mem_key[i].base == chunk) {
-			mem_key[i].type = 0;
-			for (size_t j = 1; mem_key[i + j].type == 2; ++j)
-				mem_key[i + j].type = 0;
+	/* reassemble busy hop structure and yoink memory region size */
+	struct busy_hop *busy = (struct busy_hop *)((char *)mem - offsetof(struct busy_hop, data));
+	size_t size = busy->size;
 
-			return;
-		}
-	}
+	/* recast to free hop structure and link to beginning of chain */
+	struct free_hop *p = (struct free_hop *)busy;
+	p->size = size;
+	struct free_hop *tmp = free_origin.fw;
+	free_origin.fw = p;
+	p->bk = &free_origin;
+	p->fw = tmp;
+	tmp->bk = p;
+	return;
 }
 
-void *crealloc(void *chunk, size_t size)
+void *crealloc(void *mem, size_t size)
 {
-	void *nchunk = cmalloc(size);
-	memcpy(nchunk, chunk, size);
-	cfree(chunk);
-	return(nchunk);
+	void *nmem = cmalloc(size);
+	struct busy_hop *busy = (struct busy_hop *)((char *)mem - offsetof(struct busy_hop, data));
+	size_t msize = busy->size;
+	memcpy(nmem, mem, msize > size ? size : msize);
+	cfree(mem);
+	return nmem;
 }
 
 uint32_t mem_status(void)
 {
-	uint32_t allocated;
-	for (size_t i = 0; i < chunk_total; ++i) {
-		if (mem_key[i].type > 0)
-			++allocated;
+	struct free_hop *p = free_origin.fw;
+	uint32_t free = 0;
+	while (p != NULL) {
+		free += p->size;
+		p = p->fw;
 	}
 
-	return allocated;
+	return free;
 }

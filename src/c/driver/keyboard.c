@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 #include "include/keyboard.h"
 #include "include/terminal.h"
 #include "include/func.h"
@@ -12,12 +13,16 @@
 void keyboard_handler(void)
 {
 	static int8_t shift = 0;
-	static uint32_t i = 0;
-	static tbuf_size = 80;
+	static size_t i = 0;
+	static size_t tbuf_size = 80;
 	uint8_t scan = inb(0x60);
 
-	if (scan == 0x2a || scan == 0xaa) {
-		shift = ~shift;
+	if (scan == 0x2a) {
+		shift = 1;
+		return;
+	}
+	else if (scan == 0xaa) {
+		shift = 0;
 		return;
 	}
 
@@ -30,7 +35,7 @@ void keyboard_handler(void)
 		terminal_buffer[i] = scan_key[scan];
 		++i;
 		break;
-	case -1:				// shiftkey held
+	case 1:				// shiftkey held
 		t_putc(shift_scan_key[scan]);
 		terminal_buffer[i] = shift_scan_key[scan];
 		++i;

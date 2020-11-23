@@ -13,11 +13,8 @@ void *memset(void *mem, int c, size_t n)
 
 void *memcpy(void *dest, void *src, size_t n)
 {
-	uint8_t *tmp_dest = dest;
-	uint8_t *tmp_src = src;
-
 	while (n--)
-		tmp_dest[n] = tmp_src[n];
+		((char *)dest)[n] = ((char *)src)[n];
 
 	return dest;
 }

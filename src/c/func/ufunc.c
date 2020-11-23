@@ -41,8 +41,19 @@ void help(void)
 
 void umem_status(void)
 {
-	uint32_t allocated = mem_status();
-	printf("%d out of %d chunks used\n", allocated, chunk_total);
+	uint32_t free = mem_status();
+	printf("%d out of %d bytes free\n", free, mem_total);
+
+	return;
+}
+
+void mem_hops(void)
+{
+	struct free_hop *p = free_origin.fw;
+	for (size_t i = 0; p != NULL; ++i) {
+		printf("(hop %d) base: %x, size: %x, bk: %x, fw: %x\n", i, p, p->size, p->bk, p->fw);
+		p = p->fw;
+	}
 
 	return;
 }
@@ -64,7 +75,7 @@ void time(int argc, char **args)
 	uint32_t ms;
 	if (argc < 1) {
 		t_puts("Usage: time [program] [args]\n");
-		t_puts("NOTE: time() currently only works with standard argument form, using spaces");
+		t_puts("NOTE: time() currently only works with standard argument form, using spaces\n");
 		return;
 	}
 
