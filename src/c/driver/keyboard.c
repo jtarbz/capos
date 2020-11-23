@@ -12,7 +12,7 @@
  */
 void keyboard_handler(void)
 {
-	static int8_t shift = 0;
+	static uint8_t shift = 0;
 	static size_t i = 0;
 	static size_t tbuf_size = 80;
 	uint8_t scan = inb(0x60);
@@ -51,8 +51,10 @@ void keyboard_handler(void)
 		terminal_buffer[i] = '\0';
 	}
 
-	if (i == (tbuf_size - 1))
+	if (i == (tbuf_size - 1)) {
 		terminal_buffer = crealloc(terminal_buffer, ++tbuf_size);
+		terminal_buffer[tbuf_size - 1] = '\0';
+	}
 
 	if (scan_key[scan] == '\n') {
 		terminal_buffer[i - 1] = '\0';	// delete line feed

@@ -44,7 +44,7 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length);
 void *cmalloc(size_t size);
 void cfree(void *mem);
 void *crealloc(void *mem, size_t size);
-uint32_t mem_status(void);
+size_t mem_status(void);
 void defragment(void);
 
 extern struct free_hop free_origin;

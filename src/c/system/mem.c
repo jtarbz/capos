@@ -28,10 +28,6 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 					                  sizeof(entry->size));
 	}
 
-	/* find the total amount of memory available */
-	for (size_t i = 0; i < available_regions; ++i)
-		mem_total += available_mem[i]->length_low;
-
 	for (size_t i = 0; i < available_regions; ++i) {
 		if (available_mem[i]->length_low >= 0x100000) {
 			free_origin.fw = (struct free_hop *)available_mem[i]->base_addr_low;
@@ -41,6 +37,7 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 			free_origin.fw->size = (size_t)available_mem[i]->length_low;
 			free_origin.fw->fw = NULL;
 			free_origin.fw->bk = &free_origin;
+			mem_total += available_mem[i]->length_low;
 			break;
 		}
 	}
@@ -115,10 +112,10 @@ void *crealloc(void *mem, size_t size)
 	return nmem;
 }
 
-uint32_t mem_status(void)
+size_t mem_status(void)
 {
 	struct free_hop *p = free_origin.fw;
-	uint32_t free = 0;
+	size_t free = 0;
 
 	while (p != NULL) {
 		free += p->size;

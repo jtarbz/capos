@@ -15,6 +15,7 @@ static size_t t_row;
 static size_t t_column;
 static uint8_t t_color;
 static uint16_t *t_buffer;	// for output
+static uint8_t prompt = 0;
 
 char *terminal_buffer;		// for commands
 uint8_t terminal_ready;
@@ -74,13 +75,14 @@ void t_putc(char c)
 	switch (c) {
 	case '\n':
 		t_column = 0;
-		++t_row ;
+		++t_row;
 		break;
 	case '\r':
 		t_puts("capos> ");
+		prompt = 1;
 		break;
 	case '\b':
-		if (!terminal_ready && t_column < 8) {	// let's not delete the prompt ...
+		if (prompt && t_column < 8) {	// let's not delete the prompt ...
 			break;
 		}
 		else if (t_column != 0) {
@@ -102,6 +104,7 @@ void t_putc(char c)
 
 	if (t_column == VGA_WIDTH) {
 		t_column = 0;
+		prompt = 0;
 		++t_row;
 	}
 

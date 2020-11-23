@@ -41,7 +41,7 @@ void help(void)
 
 void umem_status(void)
 {
-	uint32_t free = mem_status();
+	size_t free = mem_status();
 	printf("%d out of %d bytes free\n", free, mem_total);
 
 	return;
