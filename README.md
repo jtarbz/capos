@@ -42,6 +42,6 @@ the information for OS design / programming, and to Kustaa Nyholm for his tiny
 printf implementation, which has been incredibly useful for debugging.
 
 # licensing
-The source code of project is licensed under the GNU General Public License
+The source code of the project is licensed under the GNU General Public License
 Version 3. The arrangement of Megalovania by Toby Fox for the PC motherboard
 speaker is licensed under CC BY-NC-SA 3.0.

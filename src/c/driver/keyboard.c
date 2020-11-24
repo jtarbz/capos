@@ -52,8 +52,9 @@ void keyboard_handler(void)
 	}
 
 	if (i == (tbuf_size - 1)) {
-		terminal_buffer = crealloc(terminal_buffer, ++tbuf_size);
-		terminal_buffer[tbuf_size - 1] = '\0';
+		tbuf_size += 0x20;
+		terminal_buffer = crealloc(terminal_buffer, tbuf_size);
+		memset(terminal_buffer + i, '\0', tbuf_size - i);
 	}
 
 	if (scan_key[scan] == '\n') {

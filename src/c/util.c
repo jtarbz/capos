@@ -74,3 +74,29 @@ int atoi(char *p)
 
 	return k;
 }
+
+/*
+ * hex ascii to integer. first move past any '0x' at the beginning, then use
+ * bit magic to calculate the value. referenced from this stackoverflow discussion:
+ * https://stackoverflow.com/questions/10156409/convert-hex-string-char-to-int
+ * 
+ * the bit magic takes only the last four bits, then adds nine if the character
+ * is not a digit
+ */
+uint32_t hatoi(char *p)
+{
+	uint32_t k = 0;
+
+	if (*p == '0')
+		++p;
+	if (*p == 'x' || *p == 'X')
+		++p;
+
+	while (*p) {
+		char v = (*p & 0xF) + (*p >> 6) | ((*p >> 3) & 0x8);
+		k = (k << 4) | (uint64_t) v;
+		++p;
+	}
+
+	return k;
+} 

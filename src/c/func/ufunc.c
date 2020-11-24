@@ -58,6 +58,49 @@ void mem_hops(void)
 	return;
 }
 
+/*
+ * print_mem(address, length)
+ * address must be in hex; length may be in hex (starting with '0x') or decimal
+ */
+void print_mem(int argc, char **args)
+{
+	uint8_t *p = (uint8_t *)hatoi(args[0]);
+	size_t size;
+
+	if (args[1][0] == '0' && (args[1][1] == 'x' || args[1][1] == 'X'))
+		size = hatoi(args[1]);
+	else
+		size = atoi(args[1]);
+
+	for (size_t i = 0; i < size; ++i) {
+		if ((*(p + i) & 0xff) > 0xf)
+			printf("%x ", *(p + i) & 0xff);
+		else
+			printf("0%x ", *(p + i) & 0xff);
+	}
+
+	t_putc('\n');
+	return;
+}
+
+/*
+ * mem_poke(address, value)
+ * address in hex; value in either hex ('0x...') or decimal
+ */
+void mem_poke(int argc, char **args)
+{
+	uint8_t *p = (uint8_t *)hatoi(args[0]);
+	uint8_t set;
+
+	if (args[1][0] == '0' && (args[1][1] == 'x' || args[1][1] == 'X'))
+		set = hatoi(args[1]);
+	else
+		set = atoi(args[1]);
+	
+	*p = set;
+	return;
+}
+
 void udefrag(void)
 {
 	struct free_hop *p = free_origin.fw;

@@ -12,6 +12,8 @@ struct func func_key[] = {
 	{"happy_birthday", happy_birthday},	// in music.c
 	{"mem_status", umem_status},
 	{"mem_hops", mem_hops},
+	{"print_mem", print_mem},
+	{"mem_poke", mem_poke},
 	{"defragment", udefrag},
 	{"echo", echo},
 	{"time", time},

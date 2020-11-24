@@ -14,10 +14,10 @@ static uint16_t* const VGA_MEMORY = (uint16_t *)0xb8000;
 static size_t t_row;
 static size_t t_column;
 static uint8_t t_color;
-static uint16_t *t_buffer;	// for output
+static uint16_t *t_buffer;	// for output (vga entry is 16 bits)
 static uint8_t prompt = 0;
 
-char *terminal_buffer;		// for commands
+char *terminal_buffer;		// for commands (char is 8 bits)
 uint8_t terminal_ready;
 
 uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)

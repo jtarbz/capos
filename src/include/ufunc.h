@@ -6,6 +6,8 @@ void mul(int argc, char **args);
 void help(void);
 void umem_status(void);
 void mem_hops(void);
+void print_mem(int argc, char **args);
+void mem_poke(int argc, char **args);
 void echo(int argc, char **args);
 void time(int argc, char **args);
 void udefrag(void);

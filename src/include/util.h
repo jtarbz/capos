@@ -10,6 +10,7 @@ size_t strlen(const char *str);
 size_t strcmp(char *str1, char *str2);
 void strcpy(char *str1, char *str2);
 int atoi(char *p);
+uint32_t hatoi(char *p);
 void outb(uint16_t port, uint8_t val);
 uint8_t inb(uint16_t port);
 
