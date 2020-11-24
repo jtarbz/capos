@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include "include/multiboot.h"
 #include "include/mem.h"
-#include "include/printf.h"
 #include "include/util.h"
 
 struct free_hop free_origin;	// global, head of free hop list
@@ -10,14 +9,16 @@ size_t mem_total;		// set in mmap_init()
 
 void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 {
-	mmap_entry_t *entry = mmap_addr;
-	size_t available_regions = 0;
+	mmap_entry_t *entry = mmap_addr;	// multiboot memory info
+	struct free_hop *p = &free_origin;	// for setting initial hops
+	size_t available_regions = 0;		// tracked for iteration
 	mem_total = 0;
 
 	/* make space for all regions to have enough for available regions */
 	mmap_entry_t *available_mem[mmap_length / sizeof(mmap_entry_t)];
 
 	/* iterate through memory regions, keeping track of available space */
+	/* valid free space must be above low memory (> 1MB) */
 	while (entry < mmap_addr + mmap_length) {
 		if (entry->type == 1 && entry->base_addr_low >= 0x100000) {
 			available_mem[available_regions] = entry;
@@ -28,17 +29,18 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 					                  sizeof(entry->size));
 	}
 
+	/* set free origin values, then iterate through available mem in 32 bit space */
+	p->size = 0;
+	p->bk = NULL;
 	for (size_t i = 0; i < available_regions; ++i) {
-		if (available_mem[i]->length_low >= 0x100000) {
-			free_origin.fw = (struct free_hop *)available_mem[i]->base_addr_low;
-			free_origin.size = 0;
-			free_origin.bk = NULL;
+		if (available_mem[i]->base_addr_low < 0xffffffff) {
+			p->fw = (struct free_hop *)available_mem[i]->base_addr_low;
 
-			free_origin.fw->size = (size_t)available_mem[i]->length_low;
-			free_origin.fw->fw = NULL;
-			free_origin.fw->bk = &free_origin;
+			p->fw->size = (size_t)available_mem[i]->length_low;
+			p->fw->fw = NULL;
+			p->fw->bk = p;
+			p = p->fw;
 			mem_total += available_mem[i]->length_low;
-			break;
 		}
 	}
 
@@ -64,10 +66,9 @@ void *cmalloc(size_t size)
 		p = p->fw;
 	}
 
-	/* otherwise, split the first larger region */
+	/* otherwise, split the first larger region and fix links */
 	p = free_origin.fw;
 	while (p != NULL) {
-		/* if size is greater, carve out space and fix links */
 		if (p->size - sizeof(struct free_hop) > size) {
 			p->bk->fw = (struct free_hop *)((char *)p + size);
 			p->bk->fw->bk = p->bk;
@@ -80,7 +81,6 @@ void *cmalloc(size_t size)
 			return &(busy->data);
 		}
 
-		/* if size is less, proceed to next link in chain */
 		p = p->fw;
 	}
 
