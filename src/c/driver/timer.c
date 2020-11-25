@@ -1,10 +1,12 @@
 #include <stdint.h>
 #include "include/timer.h"
 #include "include/util.h"
-#include "include/printf.h"
 
 uint32_t ticks;
 
+/*
+ * called each time the timer ticks. increments uptime
+ */
 void timer_handler(void)
 {
 	++ticks;

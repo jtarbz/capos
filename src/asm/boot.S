@@ -12,7 +12,6 @@ DEPTH		equ 0				; bits per pixel
 global _start:function (_start.end - _start)
 global wrap_lgdt:function (wrap_lgdt.end - wrap_lgdt)
 global wrap_lidt:function (wrap_lidt.end - wrap_lidt)
-extern _init
 extern caposk
 
 ; declare multiboot standard header
@@ -43,7 +42,6 @@ section .bss
 section .text
 _start:
 	mov esp, stack_top
-	call _init
 
 	mov ecx, 0x1b		; load apic_base msr
 	rdmsr

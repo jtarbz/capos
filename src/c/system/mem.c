@@ -70,7 +70,7 @@ void *cmalloc(size_t size)
 	p = free_origin.fw;
 	while (p != NULL) {
 		if (p->size - sizeof(struct free_hop) > size) {
-			p->bk->fw = (struct free_hop *)((char *)p + size);
+			p->bk->fw = (struct free_hop *)((uint8_t *)p + size);
 			p->bk->fw->bk = p->bk;
 			p->bk->fw->fw = p->fw;
 			p->bk->fw->size = (p->size - size);
@@ -90,7 +90,7 @@ void *cmalloc(size_t size)
 void cfree(void *mem)
 {
 	/* reassemble busy hop structure and yoink memory region size */
-	struct busy_hop *busy = (struct busy_hop *)((char *)mem - offsetof(struct busy_hop, data));
+	struct busy_hop *busy = (struct busy_hop *)((uint8_t *)mem - offsetof(struct busy_hop, data));
 	size_t size = busy->size;
 
 	/* recast to free hop structure and link to beginning of chain */
@@ -133,7 +133,7 @@ void defragment(void)
 	/* search for adjacent hops, then collapse them together */
 	while (p != NULL) {
 		while (cmp != NULL) {
-			if (cmp == (struct free_hop *)((char *)p + p->size)) {
+			if (cmp == (struct free_hop *)((uint8_t *)p + p->size)) {
 				cmp->bk->fw = cmp->fw;
 				if (cmp->fw != NULL)
 					cmp->fw->bk = cmp->bk;

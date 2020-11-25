@@ -4,6 +4,7 @@
 void add(int argc, char **args);
 void mul(int argc, char **args);
 void help(void);
+void ufuncs(void);
 void umem_status(void);
 void mem_hops(void);
 void print_mem(int argc, char **args);

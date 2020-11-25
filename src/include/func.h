@@ -9,7 +9,7 @@ struct func {
 	void *addr;
 };
 
-uint64_t func_seek(char *);
+void *func_seek(char *);
 void fexec(void *, int, char **);
 
 extern struct func func_key[];

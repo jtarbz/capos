@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include "include/keyboard.h"
 #include "include/terminal.h"
-#include "include/func.h"
 #include "include/util.h"
 #include "include/mem.h"
 

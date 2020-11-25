@@ -2,9 +2,7 @@
 #include "include/mem.h"
 #include "include/terminal.h"
 #include "include/tables.h"
-#include "include/util.h"
 #include "include/timer.h"
-#include "include/beep.h"
 #include "include/ufunc.h"
 #include "include/printf.h"
 
@@ -20,6 +18,14 @@ void caposk(multiboot_info_t *mbd)
 	umem_status();
 	t_putc('\r');
 
+	/*
+	 * starting here, the operating system begins to wait for the keyboard
+	 * driver to report an enter key-stroke (terminal_ready gets set to 1).
+	 * execution is then transferred to the terminal() function, which
+	 * handles whatever is in the terminal buffer (populated by the
+	 * keyboard driver) and attempts to execute a user function with
+	 * arguments.
+	 */
 	for (;;) {
 		asm volatile ("nop");	// conditional ignored without this ...
 		if (terminal_ready)

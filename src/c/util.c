@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include "include/func.h"
 #include "include/util.h"
-#include "include/printf.h"
 
 void *memset(void *mem, int c, size_t n)
 {

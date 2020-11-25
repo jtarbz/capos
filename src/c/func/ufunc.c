@@ -12,7 +12,7 @@ void add(int argc, char **args)
 {
 	int sum = 0;
 
-	for (size_t i = 0; i < argc; ++i)
+	for (int i = 0; i < argc; ++i)
 		sum += atoi(args[i]);
 	
 	printf("sum: %d\n", sum);
@@ -23,7 +23,7 @@ void mul(int argc, char **args)
 {
 	int product = 1;
 
-	for (size_t i = 0; i < argc; ++i)
+	for (int i = 0; i < argc; ++i)
 		product *= atoi(args[i]);
 
 	printf("product: %d\n", product);
@@ -34,11 +34,26 @@ void help(void)
 {
 	printf("This is the help page for Jason Walter's Capstone OS\n");
 	printf("--------\n");
-	printf("[Help text goes here]\n");
+	printf("The Capstone operating system is a work in progress. Its design\n"
+	"is meant to highlight the user benefits of eschewing kernel level\n"
+	"security concerns, such as a greater capacity for personal computing.\n"
+	"Run ufuncs() for a list of available user functions!\n");
 
 	return;
 }
 
+void ufuncs(void)
+{
+	for (size_t i = 0; func_key[i].addr != NULL; ++i)
+		printf("%s(), %x\n", func_key[i].name, func_key[i].addr);
+
+	return;
+}
+
+/*
+ * print the amount of free memory out of the amount of total memory.
+ * referenced in the function key as "mem_status"
+ */
 void umem_status(void)
 {
 	size_t free = mem_status();
@@ -47,6 +62,11 @@ void umem_status(void)
 	return;
 }
 
+/*
+ * print all free memory hops in the order that they appear in the free list.
+ * free memory hops are the headers of available memory regions that are
+ * not currently in use, maintained as a linked list (see mem.c)
+ */
 void mem_hops(void)
 {
 	struct free_hop *p = free_origin.fw;
@@ -101,6 +121,10 @@ void mem_poke(int argc, char **args)
 	return;
 }
 
+/*
+ * ufunc wrapper for the defragment() function in mem.c.
+ * defragments free memory hops and then reports the number of regions collapsed
+ */
 void udefrag(void)
 {
 	struct free_hop *p = free_origin.fw;
@@ -134,13 +158,17 @@ void echo(int argc, char **args)
 	return;
 }
 
+/*
+ * given a ufunc invocation, report the timei n ms that it takes to execute
+ */
 void time(int argc, char **args)
 {
 	void *func;
 	uint32_t ms;
 	if (argc < 1) {
 		t_puts("Usage: time [program] [args]\n");
-		t_puts("NOTE: time() currently only works with standard argument form, using spaces\n");
+		t_puts("NOTE: time() currently only works with standard"
+		"argument form, using spaces\n");
 		return;
 	}
 

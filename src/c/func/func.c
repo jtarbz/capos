@@ -3,7 +3,13 @@
 #include "include/func.h"
 #include "include/util.h"
 
-uint64_t func_seek(char *name)
+/*
+ * find the first user function in the function key that
+ * matches the given string completely up to its length
+ * this is "fuzzy" matching but allows for shortcuts if you know
+ * the order of ufuncs
+ */
+void *func_seek(char *name)
 {
 	size_t i = 0;
 
