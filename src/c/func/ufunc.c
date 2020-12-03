@@ -71,7 +71,7 @@ void mem_hops(void)
 {
 	struct free_hop *p = free_origin.fw;
 	for (size_t i = 0; p != NULL; ++i) {
-		printf("(hop %d) base: %x, size: %x, bk: %x, fw: %x\n", i, p, p->size, p->bk, p->fw);
+		printf("(hop %d) base: %x, size: %x, fw: %x\n", i, p, p->size, p->fw);
 		p = p->fw;
 	}
 

@@ -27,7 +27,6 @@ typedef struct split_mmap_entry mmap_entry_t;
 struct free_hop {
 	size_t size;
 	struct free_hop *fw;
-	struct free_hop *bk;
 };
 
 /*

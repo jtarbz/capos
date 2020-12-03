@@ -31,14 +31,12 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 
 	/* set free origin values, then iterate through available mem in 32 bit space */
 	p->size = 0;
-	p->bk = NULL;
 	for (size_t i = 0; i < available_regions; ++i) {
 		if (available_mem[i]->base_addr_low < 0xffffffff) {
 			p->fw = (struct free_hop *)available_mem[i]->base_addr_low;
 
 			p->fw->size = (size_t)available_mem[i]->length_low;
 			p->fw->fw = NULL;
-			p->fw->bk = p;
 			p = p->fw;
 			mem_total += available_mem[i]->length_low;
 		}
@@ -49,16 +47,14 @@ void init_mmap(mmap_entry_t *mmap_addr, multiboot_uint32_t mmap_length)
 
 void *cmalloc(size_t size)
 {
-	struct free_hop *p = free_origin.fw;
+	struct free_hop *p = &free_origin;
 	size = (size + sizeof(struct busy_hop) + 7) & (-8);
 
 	/* if there is a memory region of equal size, pop out and fix links */
-	while (p != NULL) {
-		if (p->size == size) {
-			p->bk->fw = p->fw;
-			if (p->fw != NULL)
-				p->fw->bk = p->bk;
-			struct busy_hop *busy = (struct busy_hop *)p;
+	while (p->fw != NULL) {
+		if (p->fw->size == size) {
+			struct busy_hop *busy = (struct busy_hop *)p->fw;
+			p->fw = p->fw->fw;
 			busy->size = size;
 			return &(busy->data);
 		}
@@ -67,16 +63,13 @@ void *cmalloc(size_t size)
 	}
 
 	/* otherwise, split the first larger region and fix links */
-	p = free_origin.fw;
-	while (p != NULL) {
-		if (p->size - sizeof(struct free_hop) > size) {
-			p->bk->fw = (struct free_hop *)((uint8_t *)p + size);
-			p->bk->fw->bk = p->bk;
-			p->bk->fw->fw = p->fw;
-			p->bk->fw->size = (p->size - size);
-			if (p->fw != NULL)
-				p->fw->bk = p->bk->fw;
-			struct busy_hop *busy = (struct busy_hop *)p;
+	p = &free_origin;
+	while (p->fw != NULL) {
+		if (p->fw->size - sizeof(struct free_hop) > size) {
+			struct busy_hop *busy = (struct busy_hop *)p->fw;
+			p->fw = (struct free_hop *)((uint8_t *)p->fw + size);
+			p->fw->fw = ((struct free_hop *)busy)->fw;
+			p->fw->size = (((struct free_hop *)busy)->size - size);
 			busy->size = size;
 			return &(busy->data);
 		}
@@ -98,9 +91,12 @@ void cfree(void *mem)
 	p->size = size;
 	struct free_hop *tmp = free_origin.fw;
 	free_origin.fw = p;
-	p->bk = &free_origin;
 	p->fw = tmp;
-	tmp->bk = p;
+
+	/* if you don't mind the extra overhead, you could invoke */
+	/* defragment() here or do a single run through the free list to */
+	/* check if the hop can be collapsed into another */
+
 	return;
 }
 
@@ -128,23 +124,21 @@ size_t mem_status(void)
 void defragment(void)
 {
 	struct free_hop *p = free_origin.fw;
-	struct free_hop *cmp = p->fw;
+	struct free_hop *cmp = p;
 
 	/* search for adjacent hops, then collapse them together */
 	while (p != NULL) {
-		while (cmp != NULL) {
-			if (cmp == (struct free_hop *)((uint8_t *)p + p->size)) {
-				cmp->bk->fw = cmp->fw;
-				if (cmp->fw != NULL)
-					cmp->fw->bk = cmp->bk;
-				p->size = (p->size + cmp->size);
+		while (cmp->fw != NULL) {
+			if (cmp->fw == (struct free_hop *)((uint8_t *)p + p->size)) {
+				p->size = (p->size + cmp->fw->size);
+				cmp->fw = cmp->fw->fw;
 			}
 
 			cmp = cmp->fw;
 		}
 
 		p = p->fw;
-		cmp = free_origin.fw;
+		cmp = &free_origin;
 	}
 
 	return;
