@@ -16,6 +16,7 @@ void keyboard_handler(void)
 	static size_t tbuf_size = 80;
 	uint8_t scan = inb(0x60);
 
+	/* set shift value */
 	if (scan == 0x2a) {
 		shift = 1;
 		return;
@@ -25,11 +26,12 @@ void keyboard_handler(void)
 		return;
 	}
 
+	/* ensure that scan is in range of scan_key */
 	if (scan > 0xba || scan_key[scan] == 0)
 		return;
 
 	switch (shift) {
-	case 0:					// shiftkey not held
+	case 0:				// shiftkey not held
 		t_putc(scan_key[scan]);
 		terminal_buffer[i] = scan_key[scan];
 		++i;
